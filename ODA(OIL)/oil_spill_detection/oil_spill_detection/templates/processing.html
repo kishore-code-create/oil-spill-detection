@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .processing-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        min-height: 70vh;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        animation: fadeIn 0.8s ease;
+    }
+
+    .panel {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .panel-left {
+        align-items: center;
+        text-align: center;
+    }
+
+    .panel-right {
+        background: rgba(0, 0, 0, 0.2);
+        border-color: rgba(0, 170, 255, 0.2);
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px;
+    }
+
+    .panel-title {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    /* Left Panel Styles */
+    .radar-icon {
+        font-size: 4rem;
+        color: #00aaff;
+        margin-bottom: 20px;
+        animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+
+        0%,
+        100% {
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+            transform: scale(1);
+        }
+
+        50% {
+            text-shadow: 0 0 30px rgba(0, 170, 255, 0.9);
+            transform: scale(1.05);
+        }
+    }
+
+    .progress-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .filename-tag {
+        background: rgba(0, 170, 255, 0.1);
+        color: #00aaff;
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        border: 1px solid rgba(0, 170, 255, 0.2);
+        margin-bottom: 30px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .percent-container {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .percent-display {
+        font-size: 4rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    .time-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 30px;
+    }
+
+    .time-card {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .time-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .time-value {
+        font-size: 1.25rem;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        color: #00ffcc;
+        font-weight: 700;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+        transition: width 0.3s ease;
+    }
+
+    /* Right Panel Styles (Visualizer) */
+    .visualizer-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    canvas {
+        max-width: 100%;
+        max-height: 500px;
+        border-radius: 12px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        image-rendering: pixelated;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: rgba(0, 255, 204, 0.5);
+        box-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+        pointer-events: none;
+        z-index: 10;
+        display: none;
+    }
+
+    .legend {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        font-size: 0.85rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    .success-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        border-radius: 24px;
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        color: #00ffcc;
+        margin-bottom: 20px;
+        transform: scale(0);
+        animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes pop {
+        to {
+            transform: scale(1);
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .processing-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="processing-layout">
+    <!-- Left Panel: Progress Information -->
+    <div class="panel panel-left" id="main-panel">
+        <div class="radar-icon"><i class="fas fa-microchip"></i></div>
+        <div class="progress-title">Deep Analysis</div>
+        <div class="filename-tag">
+            <i class="fas fa-file-alt mr-2"></i> {{ filename }}
+        </div>
+
+        <div class="percent-container">
+            <div class="percent-display" id="percent-display">0%</div>
+        </div>
+
+        <div class="time-grid">
+            <div class="time-card">
+                <div class="time-label">Elapsed Time</div>
+                <div class="time-value" id="time-elapsed">00:00</div>
+            </div>
+            <div class="time-card">
+                <div class="time-label">Est. Remaining</div>
+                <div class="time-value" id="time-remaining">00:00</div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+
+        <div style="color: rgba(255,255,255,0.4); font-size: 0.9rem;" id="rows-done">
+            Initializing hyperspectral engine...
+        </div>
+
+        <!-- Success Overlay -->
+        <div class="success-overlay" id="success-overlay">
+            <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+            <h2 style="color: white; font-weight: 800;">Analysis Complete</h2>
+            <p style="color: rgba(255,255,255,0.6);">Synthesizing results and redirecting...</p>
+        </div>
+    </div>
+
+    <!-- Right Panel: Real-time Visualizer -->
+    <div class="panel panel-right">
+        <div class="panel-title">Live Reconstruction</div>
+        <div class="visualizer-container">
+            <div id="scan-line" class="scan-line"></div>
+            <canvas id="live-canvas"></canvas>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color"
+                        style="background: rgba(0, 0, 0, 1); border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <span>Surface Water</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00ffcc; box-shadow: 0 0 10px #00ffcc;"></div>
+                    <span>Detected Oil</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; font-size: 0.85rem; color: rgba(255,255,255,0.3); text-align: center;">
+                <i class="fas fa-info-circle mr-1"></i>
+                Processing 34 spectral bands row-by-row.<br>
+                Pixels are classified using Hamida et al. 3D-CNN architecture.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const taskId = "{{ task_id }}";
+    const evtSource = new EventSource(`/progress/${taskId}`);
+
+    // UI Elements
+    const fillEl = document.getElementById('progress-fill');
+    const percentEl = document.getElementById('percent-display');
+    const rowsEl = document.getElementById('rows-done');
+    const elapsedEl = document.getElementById('time-elapsed');
+    const remainingEl = document.getElementById('time-remaining');
+    const canvas = document.getElementById('live-canvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const scanLine = document.getElementById('scan-line');
+
+    let canvasInitialized = false;
+
+    evtSource.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+
+        if (data.status === 'processing') {
+            // Initialize Canvas if not already done
+            if (!canvasInitialized && data.width && data.height) {
+                canvas.width = data.width;
+                canvas.height = data.height;
+                // Fill with dark background
+                ctx.fillStyle = "#0a0a0a";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                canvasInitialized = true;
+                scanLine.style.display = 'block';
+            }
+
+            // Update Progress UI
+            const pct = data.percent;
+            fillEl.style.width = pct + '%';
+            percentEl.textContent = pct + '%';
+            rowsEl.innerHTML = `Scanning Row <strong>${data.progress}</strong> of <strong>${data.total}</strong>`;
+
+            elapsedEl.textContent = data.elapsed || '00:00';
+            remainingEl.textContent = data.remaining || '00:00';
+
+            // Draw Real-time Row
+            if (canvasInitialized && data.latest_row) {
+                const rowIdx = data.progress - 1;
+                const rowData = data.latest_row;
+                const imgData = ctx.createImageData(canvas.width, 1);
+
+                for (let x = 0; x < canvas.width; x++) {
+                    const val = rowData[x];
+                    const baseIdx = x * 4;
+
+                    if (val === 1) { // Oil detected
+                        imgData.data[baseIdx + 0] = 0;   // R
+                        imgData.data[baseIdx + 1] = 255; // G
+                        imgData.data[baseIdx + 2] = 204; // B
+                        imgData.data[baseIdx + 3] = 255; // A
+                    } else { // Neutral
+                        imgData.data[baseIdx + 0] = 15;  // Very dark grey
+                        imgData.data[baseIdx + 1] = 15;
+                        imgData.data[baseIdx + 2] = 15;
+                        imgData.data[baseIdx + 3] = 255;
+                    }
+                }
+                ctx.putImageData(imgData, 0, rowIdx);
+
+                // Move scan line
+                const canvasRect = canvas.getBoundingClientRect();
+                const step = canvasRect.height / canvas.height;
+                scanLine.style.top = (rowIdx * step) + 'px';
+            }
+        }
+
+        if (data.status === 'done') {
+            evtSource.close();
+            fillEl.style.width = '100%';
+            percentEl.textContent = '100%';
+            scanLine.style.display = 'none';
+
+            document.getElementById('success-overlay').style.display = 'flex';
+
+            setTimeout(() => {
+                window.location.href = `/task_result/${taskId}`;
+            }, 2000);
+        }
+
+        if (data.status === 'error') {
+            evtSource.close();
+            percentEl.textContent = 'Error';
+            percentEl.style.color = '#ff4444';
+            fillEl.style.background = '#ff4444';
+            rowsEl.textContent = "Error: " + (data.error || "Unknown processing error");
+        }
+    };
+
+    evtSource.onerror = function () {
+        evtSource.close();
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .dashboard-container {
+        animation: fadeIn 1s ease-in;
+        position: relative;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
+        }
+
+        50% {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 170, 255, 0.5);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
+        }
+    }
+
+    .welcome-section {
+        padding: 40px 0;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .welcome-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #00aaff, #0066cc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 30px rgba(0, 170, 255, 0.1);
+    }
+
+    .welcome-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 40px;
+    }
+
+    .method-icon {
+        height: 120px;
+        transition: all 0.5s ease;
+        filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.3));
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 20px;
+        transition: all 0.5s ease;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .hyperspectral-card {
+        animation: slideInLeft 1s ease-out 0.3s both;
+    }
+
+    .sar-card {
+        animation: slideInRight 1s ease-out 0.3s both;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(0, 170, 255, 0.1) 0%, transparent 70%);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .card:hover::before {
+        opacity: 1;
+    }
+
+    .card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 15px 30px rgba(0, 170, 255, 0.3);
+    }
+
+    .card:hover .method-icon {
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 0 15px rgba(0, 170, 255, 0.5));
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 20px 0;
+        color: #00aaff;
+    }
+
+    .card-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .btn-method {
+        background: linear-gradient(135deg, #00aaff 0%, #0066cc 100%);
+        border: none;
+        padding: 12px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 30px;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn-method::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.6s;
+        z-index: -1;
+    }
+
+    .btn-method:hover::before {
+        left: 100%;
+    }
+
+    .btn-method:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 170, 255, 0.5);
+    }
+
+    .table {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        overflow: hidden;
+        margin-top: 50px;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .table th {
+        background: rgba(0, 0, 0, 0.3);
+        color: #00aaff;
+        border-color: rgba(255, 255, 255, 0.1);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+
+    .table td {
+        border-color: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 170, 255, 0.1);
+        transform: scale(1.01);
+    }
+
+    .badge {
+        font-size: 0.9em;
+        padding: 0.6em 1em;
+        border-radius: 20px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-success {
+        background: rgba(40, 167, 69, 0.2);
+        border: 1px solid rgba(40, 167, 69, 0.5);
+        color: #28a745;
+    }
+
+    .badge-warning {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid rgba(255, 193, 7, 0.5);
+        color: #ffc107;
+    }
+
+    .method-tag {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        background: rgba(0, 170, 255, 0.1);
+        color: #00aaff;
+        border: 1px solid rgba(0, 170, 255, 0.3);
+        margin-right: 5px;
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section text-center">
+        <h1 class="welcome-title">Welcome, {{ session.username }}!</h1>
+        <p class="welcome-subtitle">Select your preferred oil spill detection method below</p>
+    </div>
+
+    <!-- Method Selection Cards -->
+    <div class="row">
+        <!-- Hyperspectral Card -->
+        <div class="col-md-6">
+            <div class="card h-100 hyperspectral-card">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='images/image.png') }}" alt="Hyperspectral"
+                        class="card-img-top method-icon mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-bar mr-2"></i>Hyperspectral Analysis
+                    </h3>
+                    <p class="card-text">
+                        Upload hyperspectral images for detailed oil spill analysis using advanced spectral processing
+                        techniques.
+                        Ideal for precise detection and classification.
+                    </p>
+                    <a href="{{ url_for('upload_hyperspectral') }}" class="btn btn-method">
+                        <i class="fas fa-file-upload mr-2"></i>Start Hyperspectral Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAR Card -->
+        <div class="col-md-6">
+            <div class="card h-100 sar-card">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='images/image1.png') }}" alt="SAR"
+                        class="card-img-top method-icon mb-3">
+                    <h3 class="card-title">
+                        <i class="fas fa-satellite mr-2"></i>SAR Analysis
+                    </h3>
+                    <p class="card-text">
+                        Process Synthetic Aperture Radar (SAR) images for oil spill detection in all weather conditions.
+                        Works effectively through clouds, day or night.
+                    </p>
+                    <a href="{{ url_for('upload_sar') }}" class="btn btn-method">
+                        <i class="fas fa-file-upload mr-2"></i>Start SAR Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detection History Table -->
+    <div class="recent-activities mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0" style="color:#00aaff;">
+                <i class="fas fa-history mr-2"></i>Detection History
+            </h3>
+            {% if activities %}
+            <span class="badge"
+                style="background:rgba(0,170,255,0.15);border:1px solid rgba(0,170,255,0.4);color:#00aaff;font-size:0.95rem;padding:6px 14px;border-radius:20px;">
+                {{ activities|length }} record{{ 's' if activities|length != 1 else '' }}
+            </span>
+            {% endif %}
+        </div>
+
+        {% if activities %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="far fa-calendar-alt mr-2"></i>Date &amp; Time</th>
+                        <th><i class="fas fa-tag mr-2"></i>Method</th>
+                        <th><i class="far fa-file mr-2"></i>Filename</th>
+                        <th><i class="fas fa-images mr-2"></i>Input/Output Photos</th>
+                        <th><i class="fas fa-vector-square mr-2"></i>Area (m&sup2;)</th>
+                        <th><i class="fas fa-info-circle mr-2"></i>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td style="white-space:nowrap;">{{ activity.date }}</td>
+                        <td><span class="method-tag">{{ activity.method }}</span></td>
+                        <td style="word-break:break-all;">{{ activity.filename }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                {% if activity.input_image %}
+                                <div class="thumb-container"
+                                    data-src="{{ url_for('static', filename='history/' + activity.input_image) }}"
+                                    data-title="Original Input"
+                                    style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); cursor: zoom-in;">
+                                    <img src="{{ url_for('static', filename='history/' + activity.input_image) }}"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                {% endif %}
+                                {% if activity.output_image %}
+                                <div class="thumb-container"
+                                    data-src="{{ url_for('static', filename='history/' + activity.output_image) }}"
+                                    data-title="Detection Result"
+                                    style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px; border: 1px solid #00aaff; cursor: zoom-in;">
+                                    <img src="{{ url_for('static', filename='history/' + activity.output_image) }}"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                {% endif %}
+                                {% if not activity.input_image and not activity.output_image %}
+                                <span style="font-size: 0.8rem; opacity: 0.5;">No images</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td><strong style="color:#00aaff;">{{ activity.area_m2 }}</strong></td>
+                        <td><span class="badge badge-{{ activity.status_color }}">{{ activity.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Glassmorphic Image Modal -->
+        <div id="imageModal"
+            style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px;">
+            <span id="closeModalBtn"
+                style="position: absolute; top: 20px; right: 35px; color: white; font-size: 40px; font-weight: bold; cursor: pointer;">&times;</span>
+            <div style="text-align: center; max-width: 90%; max-height: 90%;">
+                <h4 id="modalTitle" style="color: #00aaff; margin-bottom: 15px;"></h4>
+                <img id="modalImg"
+                    style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 0 30px rgba(0,170,255,0.4);">
+            </div>
+        </div>
+
+        <script>
+            document.querySelectorAll('.thumb-container').forEach(thumb => {
+                thumb.addEventListener('click', function () {
+                    const modal = document.getElementById("imageModal");
+                    modal.style.display = "flex";
+                    document.getElementById("modalImg").src = this.getAttribute('data-src');
+                    document.getElementById("modalTitle").innerText = this.getAttribute('data-title');
+                });
+            });
+
+            const hideModal = () => { document.getElementById("imageModal").style.display = "none"; };
+            document.getElementById("closeModalBtn").addEventListener('click', hideModal);
+            document.getElementById("imageModal").addEventListener('click', function (e) {
+                if (e.target === this) hideModal();
+            });
+        </script>
+        {% else %}
+        <div class="text-center py-5"
+            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:15px;">
+            <i class="fas fa-satellite-dish fa-3x mb-3" style="color:rgba(0,170,255,0.4);"></i>
+            <p style="color:rgba(255,255,255,0.5);font-size:1.1rem;">No detections yet. Upload a Hyperspectral or SAR
+                image to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

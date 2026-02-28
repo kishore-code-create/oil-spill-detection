@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    form {
+        background: rgba(26, 26, 26, 0.85); /* Semi-transparent dark background */
+        backdrop-filter: blur(10px); /* Creates frosted glass effect */
+        padding: 2rem;
+        border-radius: 15px;
+        border: 1px solid rgba(0, 102, 204, 0.3); /* Semi-transparent border */
+        box-shadow: 0 10px 30px rgba(0, 102, 204, 0.2);
+        animation: formEntrance 0.8s ease-out;
+    }
+    
+    @keyframes formEntrance {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-control {
+        background: rgba(42, 42, 42, 0.7); /* Semi-transparent input background */
+        border: 1px solid rgba(58, 58, 58, 0.5);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        background: rgba(42, 42, 42, 0.9);
+        border-color: rgba(0, 102, 204, 0.7);
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6">
+        <h2 class="text-center mb-4">Login</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

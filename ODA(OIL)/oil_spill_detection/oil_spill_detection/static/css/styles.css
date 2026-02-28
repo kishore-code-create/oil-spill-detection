@@ -1,0 +1,189 @@
+/* static/css/styles.css */
+/* Overriding Bootstrap legacy text colors for the dark theme */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #ffffff;
+}
+
+label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+p,
+span {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+    padding: 20px;
+}
+
+.welcome-section {
+    background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 102, 204, 0.2) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 170, 255, 0.1);
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 170, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(0, 170, 255, 0.15);
+}
+
+.method-icon {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.3));
+}
+
+.card-title {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.card-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.recent-activity {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.table th,
+.table td {
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+    vertical-align: middle;
+}
+
+.table thead th {
+    border-top: none;
+    background-color: rgba(0, 170, 255, 0.1);
+    color: #00aaff;
+    border-bottom: 2px solid rgba(0, 170, 255, 0.3);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.badge-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.badge-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+}
+
+.badge-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+/* Forms */
+.form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: #00aaff !important;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.2) !important;
+    color: white !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Buttons */
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    background: linear-gradient(135deg, #0061f2 0%, #00a6f2 100%);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0052cc 0%, #0090d9 100%);
+    color: white;
+}
+
+/* Links */
+a {
+    color: #00aaff;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #00ddff;
+    text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 20px;
+    }
+
+    .welcome-section {
+        padding: 1.5rem;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+}

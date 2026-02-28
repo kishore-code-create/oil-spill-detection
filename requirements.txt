@@ -1,0 +1,17 @@
+Flask
+Flask-MySQLdb
+pymysql
+numpy
+opencv-python
+matplotlib
+scipy
+torch
+scikit-learn
+tqdm
+Pillow
+roboflow
+pandas
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client

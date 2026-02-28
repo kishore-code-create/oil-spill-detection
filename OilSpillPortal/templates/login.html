@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 450px; margin: 80px auto;">
+    <div class="glass-card" style="padding: 40px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <i class="fas fa-shield-halved" style="font-size: 3rem; color: var(--accent); margin-bottom: 15px;"></i>
+            <h2 style="margin-bottom: 5px;">Portal Login</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Access the Oil Spill Reporting System</p>
+        </div>
+
+        <form method="POST">
+            {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username"
+                    required autofocus>
+            </div>
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block"
+                style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 14px;">
+                <i class="fas fa-sign-in-alt"></i> Sign In to Portal
+            </button>
+            <div style="margin-top: 20px; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                    <div style="margin: 0 15px; font-size: 0.8rem; color: #888;">OR</div>
+                    <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                </div>
+                <a href="{{ url_for('login_google') }}{% if next %}?next={{ next|urlencode }}{% endif %}" class="btn"
+                    style="width: 100%; background: white; color: #333; border: 1px solid #ddd; padding: 14px; font-weight: 600; font-size: 1rem;">
+                    <img src="https://www.google.com/favicon.ico"
+                        style="width: 18px; margin-right: 10px; vertical-align: middle;">
+                    Sign in with Google
+                </a>
+            </div>
+        </form>
+
+        <div style="margin-top: 30px; text-align: center; border-top: 1px solid var(--border); padding-top: 20px;">
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                Don't have an account? <br>
+                <span style="color: #666;">Please contact the system administrator to request access.</span>
+            </p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 0.8rem;">
+        <i class="fas fa-lock mr-1"></i> Secure Role-Based Access Encryption Active
+    </div>
+</div>
+{% endblock %}

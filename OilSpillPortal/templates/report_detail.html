@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="margin-bottom: 30px;">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline" style="padding: 8px 16px;">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="grid-3" style="grid-template-columns: 2fr 1fr; align-items: start;">
+    <!-- Main Content -->
+    <div class="glass-card" style="padding: 0; overflow: hidden;">
+        {% if report.image_path %}
+        <div style="width: 100%; height: 400px; overflow: hidden; border-bottom: 1px solid var(--border);">
+            <img src="{{ url_for('static', filename='uploads/' + report.image_path) }}"
+                style="width: 100%; height: 100%; object-fit: cover;" alt="Spill View">
+        </div>
+        {% else %}
+        <div
+            style="width: 100%; height: 200px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border);">
+            <i class="fas fa-image" style="font-size: 4rem; opacity: 0.1;"></i>
+        </div>
+        {% endif %}
+
+        <div style="padding: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
+                <h1 style="margin-bottom: 5px;">{{ report.title }}</h1>
+                <span class="badge badge-{{ report.severity.lower() }}" style="font-size: 1rem; padding: 6px 14px;">{{
+                    report.severity }} SEVERITY</span>
+            </div>
+
+            <div class="report-meta" style="margin-bottom: 30px; font-size: 1rem; flex-wrap: wrap;">
+                <span><i class="fas fa-location-dot"></i> {{ report.location }}</span>
+                <span><i class="fas fa-calendar-alt"></i> Posted on {{ report.created_at.strftime('%B %d, %Y at %H:%M')
+                    }}</span>
+                <span><i class="fas fa-building"></i> Source: {{ report.organization }}</span>
+            </div>
+
+            <div
+                style="background: rgba(255,255,255,0.02); border-left: 4px solid var(--accent); padding: 20px; border-radius: 4px 12px 12px 4px; margin-bottom: 40px;">
+                <h4 style="color: var(--accent); margin-bottom: 10px;"><i class="fas fa-clipboard-list mr-2"></i>Status:
+                    {{ report.status }}</h4>
+                <p style="font-size: 1.1rem; line-height: 1.8;">{{ report.description }}</p>
+            </div>
+
+            <h3 style="border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px;">
+                <i class="fas fa-vial-circle-check mr-2"></i>Analysis Data
+            </h3>
+
+            <div class="grid-3" style="gap: 20px;">
+                <div
+                    style="background: rgba(0,170,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,170,255,0.1);">
+                    <div style="font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-bottom: 5px;">LEAK
+                        AREA</div>
+                    <div style="font-size: 1.8rem; font-weight: 800;">{{ "{:,.2f}".format(report.oil_area_m2) if
+                        report.oil_area_m2 else 'N/A' }} <small style="font-size: 0.9rem;">m²</small></div>
+                </div>
+                <div
+                    style="background: rgba(0,170,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,170,255,0.1);">
+                    <div style="font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-bottom: 5px;">
+                        ESTIMATED
+                        VOLUME</div>
+                    <div style="font-size: 1.2rem; font-weight: 800; word-break: break-word;">{{ report.estimated_volume
+                        or 'Not calculated'|safe }}</div>
+                </div>
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 700; margin-bottom: 5px;">
+                        DETECTION METHOD</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;">{{ report.detection_method or 'Manual' }}</div>
+                </div>
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 700; margin-bottom: 5px;">
+                        COORDINATES</div>
+                    <div style="font-size: 1.1rem; font-weight: 700;">
+                        {{ report.latitude|round(4) if report.latitude else 'N/A' }},
+                        {{ report.longitude|round(4) if report.longitude else 'N/A' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        <div class="glass-card">
+            <h4><i class="fas fa-user-shield mr-2"></i>Auth Information</h4>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">VERIFIED BY</div>
+                    <div style="font-weight: 600;">{{ report.author }}</div>
+                    <div style="font-size: 0.85rem; color: var(--accent);">{{ report.organization }}</div>
+                </div>
+                <div style="padding-top: 15px; border-top: 1px solid var(--border);">
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">CONFIDENTIALITY</div>
+                    <div
+                        style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 5px; color: #f1c40f;">
+                        <i class="fas fa-eye-slash"></i> Restricted View
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                        This report is visible to: {{ report.visible_to.replace('_', ' ').capitalize() }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% if session.get('role') == 'admin' and users %}
+        <div class="glass-card" style="border-color: var(--accent);">
+            <h4><i class="fas fa-envelope mr-2" style="color: var(--accent);"></i>Gmail Notification</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 10px 0;">
+                Send this report's details to a registered user's Gmail.
+            </p>
+            <form action="{{ url_for('notify_user_report', report_id=report.id) }}" method="POST">
+                <div class="form-group">
+                    <select name="user_id" class="form-control" style="font-size: 0.9rem; padding: 10px;">
+                        {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.full_name or u.username }} ({{ u.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;">
+                    <i class="fas fa-paper-plane mr-1"></i> Send Gmail Details
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="glass-card" style="background: rgba(231, 76, 60, 0.05); border-color: rgba(231, 76, 60, 0.2);">
+            <h4 style="color: #e74c3c;"><i class="fas fa-triangle-exclamation mr-2"></i>Action Protocol</h4>
+            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin: 15px 0;">
+                Depending on your organization's role, please initiate the predefined spill response protocol.
+            </p>
+            <button class="btn btn-outline" style="width: 100%; border-color: #e74c3c; color: #e74c3c;">
+                Download Official PDF
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

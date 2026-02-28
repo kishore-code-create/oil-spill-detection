@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes floatUp {
+        0% {
+            transform: translateY(0);
+            opacity: 0;
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+    }
+
+    .upload-container {
+        animation: fadeInUp 1s ease-out;
+        position: relative;
+    }
+
+    .page-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.3rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00aaff, #0066cc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #00aaff, transparent);
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 20px;
+        transition: all 0.5s ease;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(0, 170, 255, 0.1) 0%, transparent 70%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 170, 255, 0.3);
+    }
+
+    .card-body {
+        padding: 35px;
+    }
+
+    .alert-info {
+        background: rgba(0, 170, 255, 0.1) !important;
+        border-color: rgba(0, 170, 255, 0.3) !important;
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .alert-info h5 {
+        color: #00aaff;
+        font-weight: 600;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .alert-info h5::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: #00aaff;
+    }
+
+    .alert-info ul {
+        margin-bottom: 0;
+    }
+
+    .alert-info li {
+        margin-bottom: 8px;
+    }
+
+    .upload-form {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        animation: fadeInUp 1s ease-out 0.9s both;
+    }
+
+    .form-label {
+        color: #00aaff;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .form-control-file {
+        border: 2px dashed rgba(0, 170, 255, 0.4);
+        padding: 50px 20px;
+        border-radius: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: rgba(0, 0, 0, 0.2);
+        color: white;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .form-control-file::before {
+        content: '\f093';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 3rem;
+        color: rgba(0, 170, 255, 0.6);
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .form-control-file::after {
+        content: 'Drop your image here or click to browse';
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-control-file:hover {
+        background: rgba(0, 170, 255, 0.1);
+        transform: scale(1.02);
+        border-color: #00aaff;
+    }
+
+    .form-text {
+        color: rgba(255, 255, 255, 0.7) !important;
+        margin-top: 15px;
+    }
+
+    .btn-process {
+        background: linear-gradient(135deg, #00aaff 0%, #0066cc 100%);
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 30px;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 170, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 10px 20px rgba(0, 170, 255, 0.3);
+        }
+
+        50% {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 170, 255, 0.5);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 10px 20px rgba(0, 170, 255, 0.3);
+        }
+    }
+
+    .btn-process::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.6s;
+        z-index: -1;
+    }
+
+    .btn-process:hover::before {
+        left: 100%;
+    }
+
+    .floating-bubble {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(0, 170, 255, 0.3);
+        pointer-events: none;
+        animation: floatUp 10s infinite linear;
+    }
+</style>
+
+<div class="upload-container">
+    <!-- Add floating bubbles with JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.querySelector('.upload-container');
+
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('floating-bubble');
+
+                // Random positioning
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.bottom = Math.random() * 20 + '%';
+
+                // Random size
+                const size = Math.random() * 10 + 5;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+
+                // Random opacity
+                bubble.style.opacity = Math.random() * 0.5 + 0.1;
+
+                // Random animation duration and delay
+                const duration = Math.random() * 15 + 5;
+                bubble.style.animationDuration = duration + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+
+                container.appendChild(bubble);
+            }
+        });
+    </script>
+
+    <h2 class="page-title">
+        <i class="fas fa-chart-bar mr-2"></i>Hyperspectral Image Analysis
+    </h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle mr-2"></i>Supported File Types</h5>
+                <ul>
+                    <li><i class="fas fa-file-code mr-2"></i>MATLAB (.mat) files for direct processing</li>
+                    <li><i class="fas fa-file-image mr-2"></i>JPG/JPEG images will be automatically converted to the
+                        required format</li>
+                </ul>
+            </div>
+
+            <div class="upload-form">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file" class="form-label">
+                            <i class="fas fa-image mr-2"></i>Select Image File
+                        </label>
+                        <input type="file" class="form-control-file" id="file" name="file" accept=".mat,.jpg,.jpeg"
+                            required>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle mr-1"></i> If you upload a JPG/JPEG image, it will be
+                            automatically converted to the required MAT format before processing.
+                        </small>
+                    </div>
+                    <button type="submit" class="btn btn-process btn-block">
+                        <i class="fas fa-cogs mr-2"></i>Upload and Process
+                    </button>
+                </form>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mt-4">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message | safe }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% endblock %}

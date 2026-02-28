@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-title">
+    <i class="fas fa-hammer"></i>
+    <span>Admin Command Center</span>
+</div>
+
+<div class="grid-3" style="margin-bottom: 40px;">
+    <div class="glass-card stat-card">
+        <div class="stat-label">REGISTERED USERS</div>
+        <div class="stat-value">{{ total_users }}</div>
+    </div>
+    <div class="glass-card stat-card">
+        <div class="stat-label">TOTAL REPORTS</div>
+        <div class="stat-value">{{ total_reports }}</div>
+    </div>
+    <div class="glass-card stat-card">
+        <div class="stat-label" style="color: #e74c3c;">CRITICAL SPILLS</div>
+        <div class="stat-value" style="color: #e74c3c;">{{ critical_reports }}</div>
+    </div>
+</div>
+
+<div class="grid-3" style="grid-template-columns: 1fr 2fr; gap: 30px;">
+    <!-- Quick Actions -->
+    <div class="glass-card">
+        <h3><i class="fas fa-bolt mr-2"></i>Quick Actions</h3>
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
+            <a href="{{ url_for('post_report') }}" class="btn btn-primary" style="justify-content: center;">
+                <i class="fas fa-plus"></i> Post New Report
+            </a>
+            <a href="{{ url_for('create_user') }}" class="btn btn-outline" style="justify-content: center;">
+                <i class="fas fa-user-plus"></i> Add New Portal User
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-outline" style="justify-content: center;">
+                <i class="fas fa-users-cog"></i> User Management
+            </a>
+            <a href="{{ url_for('admin_reports') }}" class="btn btn-outline" style="justify-content: center;">
+                <i class="fas fa-folder-open"></i> Archive & Logs
+            </a>
+            <a href="{{ url_for('test_gmail') }}" class="btn btn-outline"
+                style="justify-content: center; border-color: #2ecc71; color: #2ecc71;">
+                <i class="fas fa-plug"></i> Test Google Connectivity
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="glass-card">
+        <h3><i class="fas fa-clock-rotate-left mr-2"></i>Global Activity Feed</h3>
+        <div class="report-list" style="margin-top: 25px;">
+            {% for report in recent_reports %}
+            <a href="{{ url_for('report_detail', report_id=report.id) }}" class="report-item"
+                style="text-decoration: none; color: inherit; display: flex; transition: background 0.3s; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid transparent;"
+                onmouseover="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(0,170,255,0.2)'"
+                onmouseout="this.style.background='transparent'; this.style.borderColor='transparent'">
+                <div class="report-info" style="flex: 1;">
+                    <div class="report-title" style="font-weight: 700; margin-bottom: 5px;">{{ report.title }}</div>
+                    <div class="report-meta"
+                        style="font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 15px;">
+                        <span><i class="fas fa-location-dot"></i> {{ report.location }}</span>
+                        <span><i class="fas fa-user"></i> By {{ report.author }}</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="badge badge-{{ report.severity.lower() }}">{{ report.severity }}</span>
+                    <div
+                        style="font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">
+                        {{ report.status }}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            {% if not recent_reports %}
+            <p style="text-align: center; color: var(--text-secondary); padding: 40px;">No recent reports found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

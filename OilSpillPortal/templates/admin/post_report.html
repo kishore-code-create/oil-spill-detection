@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="margin-bottom: 30px;">
+    <a href="{{ url_for('admin_dash') }}" class="btn btn-outline" style="padding: 8px 16px;">
+        <i class="fas fa-arrow-left"></i> Back to Admin
+    </a>
+</div>
+
+<div class="glass-card">
+    <h2 style="margin-bottom: 30px;"><i class="fas fa-file-signature mr-2"></i>Post New Spill Report</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="grid-3" style="grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Left Side: Basic Info -->
+            <div>
+                <div class="form-group">
+                    <label class="form-label">Report Title</label>
+                    <input type="text" name="title" class="form-control" required
+                        placeholder="e.g. Major Oil Leak near Gulf Coast" value="{{ prefill.title }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description & Incident Details</label>
+                    <textarea name="description" class="form-control" rows="6"
+                        placeholder="Describe the spill, cause, and immediate actions taken..."></textarea>
+                </div>
+
+                <div class="grid-3" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Location (text)</label>
+                        <input type="text" name="location" class="form-control"
+                            placeholder="e.g. Area 51, Atlantic Ocean" value="{{ prefill.location }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Detection Method</label>
+                        <input type="text" name="detection_method" class="form-control"
+                            placeholder="e.g. Hyperspectral Satellite" value="{{ prefill.method }}">
+                    </div>
+                </div>
+
+                <div class="grid-3" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" step="any" name="latitude" class="form-control" placeholder="0.0000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" step="any" name="longitude" class="form-control" placeholder="0.0000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Metrics & Visibility -->
+            <div
+                style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 16px; border: 1px solid var(--border);">
+                <div class="form-group">
+                    <label class="form-label">Severity Level</label>
+                    <select name="severity" class="form-control">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Detected Area (m²)</label>
+                    <input type="number" step="any" name="oil_area_m2" class="form-control" placeholder="e.g. 1500.25"
+                        value="{{ prefill.area }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Estimated Volume</label>
+                    <input type="text" name="estimated_volume" class="form-control" placeholder="e.g. 100 cubic meters"
+                        value="{{ prefill.volume }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Status</label>
+                    <select name="status" class="form-control">
+                        <option value="Active">Active</option>
+                        <option value="Contained">Contained</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Report Image / Proof</label>
+                    {% if prefill.image %}
+                    <div
+                        style="margin-bottom: 10px; padding: 10px; background: rgba(0,170,255,0.1); border: 1px dashed #00aaff; border-radius: 8px; font-size: 0.85rem;">
+                        <i class="fas fa-link mr-1"></i> <span style="color: #00aaff;">Linked: {{ prefill.image
+                            }}</span>
+                        <input type="hidden" name="prefilled_image" value="{{ prefill.image }}">
+                    </div>
+                    {% endif %}
+                    <input type="file" name="image" class="form-control" accept="image/*" {% if not prefill.image
+                        %}required{% endif %}>
+                    <small style="color: #888; font-size: 0.75rem;">{% if prefill.image %}Uploading a new file will
+                        replace the linked image.{% else %}Choose a file or use the detection bridge.{% endif %}</small>
+                </div>
+
+                <div class="form-group"
+                    style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <label class="form-label">Visible To (Roles)</label>
+                    <div class="checkbox-group">
+                        {% for r_key, r_name in ROLES.items() %}
+                        {% if r_key != 'admin' %}
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="visible_to" value="{{ r_key }}" checked> {{ r_name }}
+                        </label>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;">
+                        Reports are always visible to Admins.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px; text-align: right;">
+            <button type="submit" class="btn btn-primary" style="padding: 16px 40px; font-size: 1.1rem;">
+                <i class="fas fa-paper-plane mr-1"></i> Publish Report to Portal
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

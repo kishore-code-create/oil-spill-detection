@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --accent-glow: rgba(0, 170, 255, 0.4);
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    .results-hero {
+        text-align: center;
+        padding: 40px 0;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .results-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fff 0%, #00aaff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .results-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .metric-item {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .metric-item:hover {
+        border-color: #00aaff;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 170, 255, 0.1);
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #00aaff;
+        margin-bottom: 5px;
+    }
+
+    .metric-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Comparison Slider / Side-by-Side */
+    .comparison-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .image-card {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .image-card:hover {
+        transform: scale(1.01);
+        border-color: rgba(0, 170, 255, 0.5);
+    }
+
+    .image-label {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 170, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 170, 255, 0.3);
+        padding: 8px 16px;
+        border-radius: 50px;
+        color: #00aaff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        z-index: 10;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .image-display {
+        width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+        display: block;
+        background: #000;
+        padding: 10px;
+    }
+
+    .volume-panel {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 40px;
+        margin-top: 20px;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .btn-action {
+        padding: 14px 32px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-publish {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        border: none;
+        color: white;
+        box-shadow: 0 10px 20px rgba(217, 119, 6, 0.3);
+    }
+
+    .btn-publish:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(217, 119, 6, 0.4);
+        color: white;
+    }
+</style>
+
+<div class="results-hero">
+    <h1><i class="fas fa-microscope mr-2"></i> Analysis Complete</h1>
+    <p class="text-secondary">Deep Learning detection results for your {{ method }} data</p>
+</div>
+
+<div class="results-card">
+    <div class="metrics-grid">
+        <div class="metric-item">
+            <div class="metric-value">{{ area | float | round(2) }}</div>
+            <div class="metric-label">Detected Area (m²)</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-value">{{ method }}</div>
+            <div class="metric-label">Detection Method</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-value">
+                {% if area < 500 %}Low{% elif area < 2000 %}Medium{% else %}High{% endif %} </div>
+                    <div class="metric-label">Severity Level</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="image-card">
+                    <span class="image-label"><i class="fas fa-eye mr-2"></i>Original View</span>
+                    <img src="{{ url_for('static', filename='history/' + segmented_image) }}" alt="Input Image"
+                        class="image-display">
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="image-card">
+                    <span class="image-label"
+                        style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.3); color: #f87171;">
+                        <i class="fas fa-bolt mr-2"></i>Detection Mask
+                    </span>
+                    <img src="{{ url_for('static', filename='history/' + overlay_image) }}" alt="Result Image"
+                        class="image-display">
+                </div>
+            </div>
+        </div>
+
+        <div class="volume-panel">
+            <h3 class="mb-4" style="font-weight: 700;"><i class="fas fa-calculator mr-2 text-primary"></i> Volume
+                Estimation</h3>
+            <form method="POST" action="{{ url_for('calculate_volume') }}">
+                <input type="hidden" name="area" value="{{ area }}">
+                <input type="hidden" name="segmented_image" value="{{ segmented_image }}">
+                <input type="hidden" name="overlay_image" value="{{ overlay_image }}">
+                <input type="hidden" name="history_image" value="{{ history_image }}">
+                <input type="hidden" name="method" value="{{ method }}">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label text-secondary">Oil Thickness (μm)</label>
+                        <input type="number" class="form-control" name="thickness" value="1" min="0.1" step="0.1"
+                            style="background: rgba(0,0,0,0.4); border-color: var(--glass-border); color: white; padding: 12px;">
+                        <small class="text-muted">Thickness varies by spill type. 1μm is typical for light
+                            crude.</small>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label text-secondary">Calculation Units</label>
+                        <select class="form-control" name="units"
+                            style="background: rgba(0,0,0,0.4); border-color: var(--glass-border); color: white; padding: 12px; height: auto;">
+                            <option value="cubic_meters">Cubic Meters (m³)</option>
+                            <option value="gallons">US Gallons (gal)</option>
+                            <option value="both">Standard & Metric</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-action">
+                        <i class="fas fa-sync-alt mr-2"></i> Run Volume Calculation
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if session.get('role') == 'admin' %}
+        <div class="mt-5 pt-4 text-center" style="border-top: 1px solid var(--glass-border);">
+            <h4 class="mb-3" style="font-weight: 700;"><i class="fas fa-broadcast-tower mr-2 text-warning"></i>
+                Authority Bridge</h4>
+            <p class="text-secondary mb-4">Securely transmit this verified detection data to the Official Reporting
+                Portal.</p>
+            <a href="http://127.0.0.1:5001/admin/reports/post?area={{ area | round(2) }}&method={{ method }}&title={{ method }}+Detection+Report&img={{ history_image }}&auto_submit=true"
+                class="btn btn-publish btn-action">
+                <i class="fas fa-paper-plane mr-2"></i> Publish Verified Report (Auto)
+            </a>
+            <a href="http://127.0.0.1:5001/admin/reports/post?area={{ area | round(2) }}&method={{ method }}&title={{ method }}+Detection+Report&img={{ history_image }}"
+                target="_blank" class="btn btn-outline-warning btn-action ml-2">
+                <i class="fas fa-edit mr-2"></i> Review & Post
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
