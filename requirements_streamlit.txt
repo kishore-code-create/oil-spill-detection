@@ -1,6 +1,6 @@
 streamlit
 numpy
-opencv-python-headless
+opencv-python
 torch
 torchvision
 scipy
@@ -11,4 +11,3 @@ scikit-learn
 requests
 tqdm
 pandas
-python-dotenv
